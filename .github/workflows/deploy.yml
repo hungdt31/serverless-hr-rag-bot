@@ -38,11 +38,16 @@ jobs:
           git config --global user.email "bot@github.actions.com"
           git config --global user.name "Github Actions RAG Builder"
           
+          # Wipe Git History to detach from Github conflicts and ensure fresh LFS track
+          rm -rf .git
+          git init
+          git switch -c main
+          
+          # Enable Git LFS and track files based on .gitattributes we created earlier
+          git lfs install
+          git add .
+          git commit -m "[Auto] Deploy Code & Vector Databases to Hugging Face"
+          
+          # Connect and force push as the standalone commit
           git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
-          
-          # Forcefully add these 3 large artifacts (created in the Build step) into the push payload
-          git add company_policies.faiss paragraphs_list.pkl companyPolicies.txt -f
-          git commit -m "[Auto] Build Database & Deploy"
-          
-          # Push to Hugging Face
           git push --force space main
