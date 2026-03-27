@@ -46,6 +46,10 @@ jobs:
           # Enable Git LFS and track files based on .gitattributes we created earlier
           git lfs install
           git add .
+          
+          # Forcefully add the Database files (.faiss, .pkl, .txt) because they are blacklisted by .gitignore
+          git add company_policies.faiss paragraphs_list.pkl companyPolicies.txt -f
+          
           git commit -m "[Auto] Deploy Code & Vector Databases to Hugging Face"
           
           # Connect and force push as the standalone commit
