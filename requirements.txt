@@ -1,0 +1,7 @@
+torch
+numpy
+faiss-cpu
+requests
+python-dotenv
+transformers
+gradio

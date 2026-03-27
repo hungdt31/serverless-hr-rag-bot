@@ -1,0 +1,13 @@
+# Environments
+.env
+venv/
+env/
+__pycache__/
+
+# Gradio virtual environment
+.gradio/
+
+# Auto-generated artifacts (Do not push these large binary files to the source code repository)
+*.faiss
+*.pkl
+companyPolicies.txt

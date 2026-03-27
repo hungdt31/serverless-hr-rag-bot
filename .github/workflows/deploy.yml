@@ -1,0 +1,52 @@
+name: Sync to Hugging Face Hub (RAG Bot)
+on:
+  push:
+    branches: [main]       # Push to HF Space whenever you update code in the main branch
+
+  # Run manually from Github Actions tab if needed
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: PREPROCESS RAG (BUILD DATABASE)
+        run: |
+          echo "Downloading data and extracting Vector Embeddings (Takes a few minutes)..."
+          python build_db.py
+          echo "Successfully generated .faiss and .pkl files on the GitHub Actions runner."
+
+      - name: Push entire Artifacts to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+          SPACE_NAME: ${{ secrets.SPACE_NAME }}
+        run: |
+          git config --global user.email "bot@github.actions.com"
+          git config --global user.name "Github Actions RAG Builder"
+          
+          # Change to your Hugging Face Space name
+          # Example: thaison508/rag-bot-cloudflare
+          export HF_SPACE="$HF_USERNAME/$SPACE_NAME"
+          
+          git remote add space https://$HF_TOKEN@huggingface.co/spaces/$HF_SPACE
+          
+          # Forcefully add these 3 large artifacts (created in the Build step) into the push payload
+          git add company_policies.faiss paragraphs_list.pkl companyPolicies.txt -f
+          git commit -m "[Auto] Build Database & Deploy"
+          
+          # Push to Hugging Face
+          git push --force space main
