@@ -42,7 +42,7 @@ jobs:
           # Example: thaison508/rag-bot-cloudflare
           export HF_SPACE="$HF_USERNAME/$SPACE_NAME"
           
-          git remote add space https://$HF_TOKEN@huggingface.co/spaces/$HF_SPACE
+          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_SPACE
           
           # Forcefully add these 3 large artifacts (created in the Build step) into the push payload
           git add company_policies.faiss paragraphs_list.pkl companyPolicies.txt -f
