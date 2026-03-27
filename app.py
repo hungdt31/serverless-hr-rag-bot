@@ -87,17 +87,32 @@ def chatbot_response(message, history):
         
     return answer + citations
 
-# Build Web Interface
-demo = gr.ChatInterface(
-    fn=chatbot_response,                 # Call logic on every chat message
-    title="🏢 Company RAG Chatbot",
-    description="Ask any question regarding our company policies. Powered by FAISS & Cloudflare Llama-3.",
-    examples=[
-        "Tell me about the Mobile Phone Policy",
-        "What is the Code of Conduct?",
-        "When will employees be notified about termination?"
-    ]
-)
+# Function to load source document
+def read_document():
+    try:
+        with open('companyPolicies.txt', 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception:
+        return "File companyPolicies.txt not found."
+
+# Build Web Interface using Tabs
+with gr.Blocks(title="🏢 Company RAG Chatbot") as demo:
+    gr.Markdown("<h1 style='text-align: center;'>🏢 Company RAG Chatbot</h1>")
+    
+    with gr.Tab("💬 AI Chatbot"):
+        gr.ChatInterface(
+            fn=chatbot_response,                 # Call logic on every chat message
+            description="Ask any question regarding our company policies. Powered by FAISS & Cloudflare Llama-3.",
+            examples=[
+                "Tell me about the Mobile Phone Policy",
+                "What is the Code of Conduct?",
+                "When will employees be notified about termination?"
+            ]
+        )
+        
+    with gr.Tab("📄 View Company Policies"):
+        gr.Markdown("### 📚 Original Document Knowledge Base")
+        gr.Textbox(value=read_document(), label="companyPolicies.txt", interactive=False, lines=20)
 
 if __name__ == "__main__":
     print("\n✅ Web Server is starting...")

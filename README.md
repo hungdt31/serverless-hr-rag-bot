@@ -1,3 +1,13 @@
+---
+title: Serverless Hr Rag Bot
+emoji: 🏢
+colorFrom: purple
+colorTo: yellow
+sdk: gradio
+sdk_version: 6.10.0
+app_file: app.py
+pinned: false
+---
 # 🏢 Serverless HR Bot (RAG system via Cloudflare AI)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
@@ -11,27 +21,8 @@ An automated Retriever-Augmented Generation (RAG) Question-Answering system desi
 
 ## ⚙️ Architecture Diagram
 
+![Architecture Diagram RAG System](image.png)
 The system is designed with a CI/CD standard that separates the offline data processing pipeline from the online querying web app, fully optimizing hardware performance and cost.
-
-```mermaid
-graph TD
-    subgraph "Phase 1: Build Database (build_db.py)"
-        DOC[📄 Company Policies .txt] --> SPLIT[✂️ Text Splitter]
-        SPLIT --> CE[🧠 Facebook DPR Context Encoder]
-        SPLIT --> PKL(🗂️ Paragraphs List .pkl)
-        CE --> DB[(💿 FAISS Vector DB)]
-    end
-    
-    subgraph "Phase 2: RAG Web App (app.py)"
-        USR((👤 User)) --> UI[🖥️ Gradio Web Chatbot]
-        UI --> |"Question"| QE[🧠 Facebook DPR Question Encoder]
-        QE --> |"Vector Query"| DB
-        DB --> |"Scan L2 Distance"| EX[Extract Top 3 Closest matches]
-        EX --> PKL
-        PKL --> |"Prompt: Context + Question"| CF[☁️ Cloudflare's Llama-3 8B Serverless Model]
-        CF --> |"Ultra-fast Generated Answer"| UI
-    end
-```
 
 ---
 
